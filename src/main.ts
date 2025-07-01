@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+import { initAuth } from './auth';
 const launchGame = (userId: string) => {
   (window as any).userId = userId;
 
@@ -8,7 +10,7 @@ const launchGame = (userId: string) => {
     backgroundColor: '#202020',
     scene: {
       preload() {
-        this.load.image('avatar', 'https://cdn.example.com/avatar.png');
+        this.load.image('avatar', 'https://upload.wikimedia.org/wikipedia/commons/7/70/User_icon_BLACK-01.png');
       },
       create() {
         this.add.image(400, 300, 'avatar').setScale(0.5);
