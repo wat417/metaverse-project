@@ -9,10 +9,11 @@
 | ファイルパス | 内容・責務 | 実装状況・備考 |
 |--------------|------------|----------------|
 | src/main.ts | エントリポイント、Phaser初期化 | 初期化／Scene起動まで完了 |
-| src/scenes/MainScene.ts | プレイヤーの描画・同期処理など主Scene | 自プレイヤー描画／同期受信済・UID連携設計中 |
+| src/scenes/MainScene.ts | プレイヤーの描画・同期処理など主Scene | 自プレイヤー描画／同期受信済・playerLabels 登録処理完了（2025-07-04） |
 | src/firebase/init.ts | Firebase 初期化処理 | 環境初期化／export済 |
 | src/firebase/publish.ts | 自プレイヤーの座標送信処理 | `set()` を使用しリアルタイム送信実装済 |
 | src/firebase/listen.ts | 他プレイヤー座標の受信処理 | 2025-07-04 新規作成・`onValue()` による描画通知機能あり |
+| src/firebase/remove.ts | 離脱プレイヤー削除監視処理 | playerLabels 削除処理と整合済み（2025-07-04） |
 
 ---
 
@@ -21,7 +22,6 @@
 | 想定パス | 予定内容 | 優先度・ステータス |
 |----------|----------|---------------------|
 | src/utils/playerMap.ts | Spriteの参照マッピング処理 | 構成整理中・中優先度 |
-| src/firebase/remove.ts | 離脱プレイヤー削除監視処理 | 次フェーズ候補・`child_removed` 利用想定 |
 | src/game/config.ts | 共通設定（画面サイズ等） | 後回し予定・必要に応じて汎用化 |
 
 ---

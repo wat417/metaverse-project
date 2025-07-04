@@ -1,4 +1,5 @@
 import { onValue, ref, getDatabase } from "firebase/database"; // 🔧 修正
+import { PlayerData } from '../types/player';
 
 export const listenToPlayerPositions = (
   currentUid: string,

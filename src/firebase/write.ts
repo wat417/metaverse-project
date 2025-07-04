@@ -1,3 +1,4 @@
+import { getDatabase, set, ref } from 'firebase/database';
 export function writePlayerData(
   uid: string,
   x: number,
