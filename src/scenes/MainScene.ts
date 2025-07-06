@@ -4,6 +4,9 @@ import { PlayerData } from '../types/player';
 import { listenToPlayerRemovals } from '../firebase/remove';
 import { onChildAdded, ref, getDatabase } from 'firebase/database';
 import { PlayerVisualSet } from '../utils/playerMap';
+import { createTeamSelector } from "../ui/teamSelector";
+import  { createGroupControl } from "../ui/groupControl";
+import { saveSession, loadSession } from "../state/sessionStore";
 
 const LABEL_STYLE = {
   fontSize: '14px',
@@ -40,6 +43,12 @@ export default class MainScene extends Phaser.Scene {
     // Firebase上の他プレイヤー参加監視
     const playersRef = ref(getDatabase(), 'players');
     onChildAdded(playersRef, (snapshot) => this.handleNewPlayer(snapshot));
+
+    // ✅ チーム選択 UI の生成
+    createTeamSelector(["Alpha", "Bravo", "Charlie"]);
+
+    // ✅ グループ操作UIの生成
+    createGroupControl();
 
     // 他プレイヤー退出監視
     listenToPlayerRemovals((uid) => {

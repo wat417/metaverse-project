@@ -1,11 +1,12 @@
 // src/scenes/statusDisplay.ts
 
-import { on } from "../utils/eventBus";
+import { on, emit } from "../utils/eventBus";
 import { hasStatusChanged } from "../utils/statusMap";
 import { hasNameOrEmojiChanged } from "../utils/nameEmojiMap";
+import { saveSession, loadSession } from "../state/sessionStore";
 
 /**
- * ステータス別の色定義
+ * 色・階層定義
  */
 const STATUS_COLORS: Record<string, string> = {
   idle: "#888888",
@@ -14,9 +15,6 @@ const STATUS_COLORS: Record<string, string> = {
   offline: "#333333"
 };
 
-/**
- * ステータス別のZ順定義
- */
 const STATUS_Z_INDEX: Record<string, number> = {
   offline: 10,
   idle: 20,
@@ -25,12 +23,12 @@ const STATUS_Z_INDEX: Record<string, number> = {
 };
 
 /**
- * チーム別表示フィルタ
+ * チーム表示フィルタ（null = 全表示）
  */
 let activeTeamFilter: string | null = null;
 
 /**
- * ステータスごとのラベルリスト
+ * 整列用ラベルリスト
  */
 const groupedLabels: Record<string, HTMLElement[]> = {
   idle: [],
@@ -40,7 +38,12 @@ const groupedLabels: Record<string, HTMLElement[]> = {
 };
 
 /**
- * 詳細領域コンテナ
+ * 最終クリック履歴（uid記録）
+ */
+let lastClickedUid: string | null = null;
+
+/**
+ * 詳細パネルコンテナ（クリック時に表示）
  */
 const detailPanel = document.createElement("div");
 detailPanel.id = "status-detail-panel";
@@ -55,7 +58,7 @@ detailPanel.style.border = "1px solid #ffffff";
 document.body.appendChild(detailPanel);
 
 /**
- * ラベル領域コンテナ
+ * ラベル一覧コンテナ
  */
 const labelContainer = document.createElement("div");
 labelContainer.id = "status-label-container";
@@ -63,7 +66,7 @@ labelContainer.style.position = "relative";
 document.body.appendChild(labelContainer);
 
 /**
- * スタイル適用（色 / Z順）
+ * スタイル適用処理
  */
 function applyStatusStyle(label: HTMLElement, status: string): void {
   const bgColor = STATUS_COLORS[status] ?? "#444444";
@@ -73,7 +76,7 @@ function applyStatusStyle(label: HTMLElement, status: string): void {
 }
 
 /**
- * hoverイベント付与
+ * hoverスタイル
  */
 function attachHoverEvents(label: HTMLElement): void {
   label.addEventListener("mouseenter", () => {
@@ -87,7 +90,7 @@ function attachHoverEvents(label: HTMLElement): void {
 }
 
 /**
- * clickイベント付与 → 詳細表示
+ * clickイベント（詳細表示＋履歴更新＋通知発火）
  */
 function attachClickEvent(
   label: HTMLElement,
@@ -97,17 +100,22 @@ function attachClickEvent(
   status: string
 ): void {
   label.addEventListener("click", () => {
-    detailPanel.innerText = `🧑 ${name} ${emoji ?? ""}\n📛 Status: ${status}\n🔑 UID: ${uid}`;
+    lastClickedUid = uid;
+
+    detailPanel.innerText =
+      `🧑 ${name} ${emoji ?? ""}\n📛 Status: ${status}\n🔑 UID: ${uid}`;
     detailPanel.style.display = "block";
 
     const rect = label.getBoundingClientRect();
     detailPanel.style.left = `${rect.right + 12}px`;
     detailPanel.style.top = `${rect.top}px`;
+
+    emit("statusLabelClicked", { uid, name, emoji, status });
   });
 }
 
 /**
- * グループ化配置
+ * ラベル整列配置
  */
 function insertGroupedLabel(label: HTMLElement, status: string): void {
   const group = groupedLabels[status];
@@ -121,7 +129,7 @@ function insertGroupedLabel(label: HTMLElement, status: string): void {
 }
 
 /**
- * 初期生成（未使用）
+ * 初期ラベル生成（未使用）
  */
 export function createStatusLabel(
   uid: string,
@@ -140,7 +148,7 @@ export function createStatusLabel(
 }
 
 /**
- * ラベル更新（生成時は全イベント追加）
+ * 更新＋生成時処理統合
  */
 export function updateStatusLabel(
   uid: string,
@@ -178,7 +186,7 @@ export function setTeamFilter(team: string | null): void {
 }
 
 /**
- * 差分イベント受信 → 更新
+ * 差分通知イベント受信
  */
 on("playerBatchUpdate", (diffs: Record<string, any>) => {
   Object.entries(diffs).forEach(([uid, data]) => {
@@ -187,4 +195,35 @@ on("playerBatchUpdate", (diffs: Record<string, any>) => {
       updateStatusLabel(uid, name, emoji, status, team);
     }
   });
+});
+
+// ✅ 表示対象チームの変更通知 → フィルタ更新
+on("teamFilterChanged", (team: string | null) => {
+  setTeamFilter(team);
+});
+
+// ✅ 指定ステータスのプレイヤーを強調表示
+on("groupSelectStatus", (targetStatus: string) => {
+  Object.entries(groupedLabels).forEach(([status, labels]) => {
+    labels.forEach((label) => {
+      label.style.outline =
+        status === targetStatus ? "2px solid #00ffff" : "none";
+    });
+  });
+});
+
+// ✅ 初期復元処理
+const session = loadSession();
+if (session.teamFilter !== null) {
+  setTeamFilter(session.teamFilter);
+}
+const lastUid = session.lastClickedUid;
+if (lastUid) {
+  const node = document.getElementById(`status-label-${lastUid}`);
+  if (node) node.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+// ✅ 状態保存（クリック時に記録）
+on("statusLabelClicked", ({ uid }) => {
+  saveSession({ teamFilter: activeTeamFilter, lastClickedUid: uid });
 });
