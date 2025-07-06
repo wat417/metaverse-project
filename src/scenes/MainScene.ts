@@ -34,6 +34,9 @@ export default class MainScene extends Phaser.Scene {
     this.avatar = this.add.image(400, 300, 'avatar').setScale(0.5);
     this.uid = (window as any).userId;
 
+    // ✅ 状態ラベル生成処理は statusDisplay.ts 側に完全移譲済
+    // ※ DOM追加や createStatusLabel() 呼び出しは不要
+
     // Firebase上の他プレイヤー参加監視
     const playersRef = ref(getDatabase(), 'players');
     onChildAdded(playersRef, (snapshot) => this.handleNewPlayer(snapshot));
@@ -56,15 +59,7 @@ export default class MainScene extends Phaser.Scene {
     const { x, y } = this.avatar;
     syncPlayerPosition(this.uid, x, y);
 
-    // 他プレイヤーのラベル位置を更新
-    this.otherPlayers.forEach((sprite, uid) => {
-      const label = this.playerLabels.get(uid);
-      if (label) {
-        label.setPosition(sprite.x, sprite.y - 24);
-      }
-    });
-
-    // VisualSet による補完更新
+    // ❌ 表示更新はイベント駆動に移行済 → ラベル手動位置更新を除外可能
     this.playerVisuals.forEach((v) => v.updatePosition(v.sprite.x, v.sprite.y));
   }
 
@@ -79,13 +74,12 @@ export default class MainScene extends Phaser.Scene {
     const sprite = this.add.sprite(x, y, 'avatar').setScale(0.5);
     this.otherPlayers.set(uid, sprite);
 
-    // ラベル描画
-    const labelText = `${name ?? 'Unknown'} ${emoji ?? ''}`;
-    const nameLabel = this.add.text(x, y - 24, labelText, LABEL_STYLE).setOrigin(0.5);
-    this.playerLabels.set(uid, nameLabel);
+    // ✅ 表示ラベルは statusDisplay.ts による動的DOM反映へ移行
+    //  ここでは生成・更新不要（責務分離済）
 
     // VisualSet作成・登録
-    const visuals = new PlayerVisualSet(uid, sprite, nameLabel);
+    const dummyLabel = this.add.text(x, y - 24, '', LABEL_STYLE).setOrigin(0.5);
+    const visuals = new PlayerVisualSet(uid, sprite, dummyLabel);
     this.playerVisuals.set(uid, visuals);
   }
 }
