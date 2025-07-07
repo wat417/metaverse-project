@@ -1,21 +1,13 @@
-// src/utils/eventBus.ts
+import { logEvent } from "../log/eventLogger"
 
-type EventCallback = (payload: any) => void;
-
-const listeners: Record<string, EventCallback[]> = {};
-
-// イベント登録：任意のイベント名とコールバックを紐づけ
-export function on(eventName: string, callback: EventCallback) {
-  if (!listeners[eventName]) {
-    listeners[eventName] = [];
+export function emitOperation(eventType: string, payload: Record<string, any>, userId: string) {
+  const timestamp = Date.now()
+  const event = {
+    eventId: `${eventType}_${timestamp}`,
+    userId,
+    type: eventType,
+    payload,
+    timestamp
   }
-  listeners[eventName].push(callback);
-}
-
-// イベント発火：対象イベント名で全コールバックに通知
-export function emit(eventName: string, payload: any) {
-  const callbacks = listeners[eventName];
-  if (callbacks) {
-    callbacks.forEach((cb) => cb(payload));
-  }
+  logEvent(event)
 }
