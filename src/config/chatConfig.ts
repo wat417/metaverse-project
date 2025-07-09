@@ -1,0 +1,1 @@
+export const CHAT_MESSAGES = ['ようこそ', 'こんにちは', 'ご質問どうぞ'];
