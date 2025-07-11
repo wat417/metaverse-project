@@ -1,23 +1,26 @@
-// chatStore.ts（修正後）
+// src/stores/chatStore.ts
 
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import type { Message } from '@/types/message';
+import type { Message, ReplyState } from '@/types/message';
 
-export const useChatStore = defineStore('chat', () => {
-  const messageHistory = ref<Message[]>([]);
+export const useChatStore = defineStore('chat', {
+  state: () => ({
+    messages: [] as Message[],
+    selectedBotId: 'bot_001',
+    replyStateMap: {} as Record<string, ReplyState>,
+  }),
 
-  function addMessage(message: Message) {
-    messageHistory.value.push(message);
-  }
+  actions: {
+    addMessage(message: Message) {
+      this.messages.push(message);
+    },
 
-  function getBotMessages(botId: string) {
-    return messageHistory.value.filter((msg) =>
-      msg.sender?.startsWith('bot_') && msg.botId === botId
-    );
-  }
+    setReplyState(botId: string, state: ReplyState) {
+      this.replyStateMap[botId] = state;
+    },
 
-  const selectedBotId = ref<string>('bot_001');
-
-  return { messageHistory, addMessage, getBotMessages, selectedBotId };
+    getMessagesByBot(botId: string) {
+      return this.messages.filter(msg => msg.botId === botId);
+    },
+  },
 });

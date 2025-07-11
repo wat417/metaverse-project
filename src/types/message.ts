@@ -1,10 +1,12 @@
-// types/message.ts
+// src/types/message.ts
+
+export type ReplyState = 'pending' | 'done';
 
 export interface Message {
   id: string;
   text: string;
-  sender: string; // 'user' または 'bot_xxx'
-  botId?: string; // Bot識別用ID
+  sender: string;
+  botId?: string;
   timestamp: number;
-  replyState?: 'pending' | 'done';
+  replyState?: ReplyState;
 }

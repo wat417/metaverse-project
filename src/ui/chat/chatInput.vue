@@ -1,5 +1,3 @@
-<!-- ui/chat/chatInput.vue -->
-
 <template>
   <div class="input-container">
     <input
@@ -15,16 +13,16 @@
 import { ref } from 'vue';
 import { useChatStore } from '@/stores/chatStore';
 import { generateBotReply } from '@/handlers/messageHandler';
+import type { Message, ReplyState } from '@/types/message';
 
 const message = ref('');
 const chatStore = useChatStore();
 
 const handleSend = async () => {
   if (message.value.trim()) {
-    const botId = chatStore.selectedBotId || 'bot_001';
+    const botId = chatStore.selectedBotId;
 
-    // ユーザー送信メッセージを履歴へ追加
-    const userMessage = {
+    const userMessage: Message = {
       id: `user-${Date.now()}`,
       text: message.value,
       sender: 'user',
@@ -32,11 +30,11 @@ const handleSend = async () => {
       timestamp: Date.now(),
       replyState: 'pending',
     };
+
     chatStore.addMessage(userMessage);
+    chatStore.setReplyState(botId, 'pending');
 
-    // Bot応答を取得 → 既に内部で履歴追加されるため UI側で再追加は不要
     await generateBotReply(botId, message.value);
-
     message.value = '';
   }
 };

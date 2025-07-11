@@ -1,23 +1,25 @@
-// chatStore.ts（修正後）
+// src/handlers/messageHandler.ts
 
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
 import type { Message } from '@/types/message';
+import { useChatStore } from '@/stores/chatStore';
 
-export const useChatStore = defineStore('chat', () => {
-  const messageHistory = ref<Message[]>([]);
+export async function generateBotReply(botId: string, userMessage: string): Promise<Message> {
+  const chatStore = useChatStore();
+  chatStore.setReplyState(botId, 'pending');
 
-  function addMessage(message: Message) {
-    messageHistory.value.push(message);
-  }
+  const replyText = `Bot ${botId} の応答です：「${userMessage}」に対して確認しました。`;
 
-  function getBotMessages(botId: string) {
-    return messageHistory.value.filter((msg) =>
-      msg.sender?.startsWith('bot_') && msg.botId === botId
-    );
-  }
+  const reply: Message = {
+    id: `reply-${Date.now()}`,
+    text: replyText,
+    sender: `bot_${botId}`,
+    botId,
+    timestamp: Date.now(),
+    replyState: 'done',
+  };
 
-  const selectedBotId = ref<string>('bot_001');
+  chatStore.addMessage(reply);
+  chatStore.setReplyState(botId, 'done');
 
-  return { messageHistory, addMessage, getBotMessages, selectedBotId };
-});
+  return reply;
+}
