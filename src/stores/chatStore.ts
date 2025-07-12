@@ -1,26 +1,27 @@
-// src/stores/chatStore.ts
+import { ref, watch } from 'vue'
+import { defineStore } from 'pinia'
+import type { Message } from '@/types/message'
+import { saveBotHistory, loadBotHistory } from '@/utils/storageHelper'
 
-import { defineStore } from 'pinia';
-import type { Message, ReplyState } from '@/types/message';
+export const useChatStore = defineStore('chat', () => {
+  const selectedBotId = ref<string | null>(null)
+  const messages = ref<Message[]>([])
 
-export const useChatStore = defineStore('chat', {
-  state: () => ({
-    messages: [] as Message[],
-    selectedBotId: 'bot_001',
-    replyStateMap: {} as Record<string, ReplyState>,
-  }),
+  watch(() => selectedBotId.value, async (id) => {
+    if (id) {
+      const restored = await loadBotHistory(id)
+      messages.value = restored ?? []
+    }
+  })
 
-  actions: {
-    addMessage(message: Message) {
-      this.messages.push(message);
-    },
+  watch(() => messages.value, async (current) => {
+    if (selectedBotId.value) {
+      await saveBotHistory(selectedBotId.value, current)
+    }
+  })
 
-    setReplyState(botId: string, state: ReplyState) {
-      this.replyStateMap[botId] = state;
-    },
-
-    getMessagesByBot(botId: string) {
-      return this.messages.filter(msg => msg.botId === botId);
-    },
-  },
-});
+  return {
+    selectedBotId,
+    messages,
+  }
+})
