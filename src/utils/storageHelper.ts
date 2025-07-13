@@ -1,37 +1,38 @@
-import type { Message } from '@/types/message'
-
-const DB_NAME = 'copilot_bot_history_db'
-const STORE_NAME = 'botHistories'
-
-function openDB(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1)
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result)
-    request.onupgradeneeded = () => {
-      const db = request.result
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'botId' })
-      }
-    }
-  })
+function saveMessages(botId: string, messages: any[]) {
+  try {
+    const key = `botHistory_${botId}`
+    const serialized = JSON.stringify(messages)
+    localStorage.setItem(key, serialized)
+  } catch (error) {
+    console.error(`[保存失敗:${botId}]`, error)
+  }
 }
 
-export async function saveBotHistory(botId: string, messages: Message[]): Promise<void> {
-  const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readwrite')
-  const store = tx.objectStore(STORE_NAME)
-  store.put({ botId, messages })
-  tx.onerror = () => console.error('履歴保存失敗:', botId)
+function loadMessages(botId: string): any[] {
+  try {
+    const key = `botHistory_${botId}`
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : []
+  } catch (error) {
+    console.error(`[読込失敗:${botId}]`, error)
+    return []
+  }
 }
 
-export async function loadBotHistory(botId: string): Promise<Message[] | null> {
-  const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readonly')
-  const store = tx.objectStore(STORE_NAME)
-  return new Promise((resolve, reject) => {
-    const request = store.get(botId)
-    request.onerror = () => reject(request.error)
-    request.onsuccess = () => resolve(request.result?.messages ?? null)
-  })
+function hasSavedMessages(botId: string): boolean {
+  try {
+    const key = `botHistory_${botId}`
+    const raw = localStorage.getItem(key)
+    return !!raw && raw.length > 0
+  } catch {
+    return false
+  }
 }
+
+const storageHelper = {
+  saveMessages,
+  loadMessages,
+  hasSavedMessages,
+}
+
+export default storageHelper

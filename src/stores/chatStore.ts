@@ -1,27 +1,52 @@
-import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import type { Message } from '@/types/message'
-import { saveBotHistory, loadBotHistory } from '@/utils/storageHelper'
+import { ref, computed, watch, unref } from 'vue'
+import storageHelper from '@/utils/storageHelper'
+
+interface Message {
+  id: string
+  botId: string
+  content: string
+  timestamp: number
+}
+
+interface ImportedData {
+  botId: string
+  messages: Message[]
+}
 
 export const useChatStore = defineStore('chat', () => {
   const selectedBotId = ref<string | null>(null)
   const messages = ref<Message[]>([])
+  const importedMessages = ref<Record<string, Message[]>>({})
 
-  watch(() => selectedBotId.value, async (id) => {
-    if (id) {
-      const restored = await loadBotHistory(id)
-      messages.value = restored ?? []
-    }
+  const filteredMessages = computed(() => {
+    const botId = unref(selectedBotId)
+    return messages.value.filter(m => m.botId === botId)
   })
 
-  watch(() => messages.value, async (current) => {
-    if (selectedBotId.value) {
-      await saveBotHistory(selectedBotId.value, current)
+  function applyImportedMessages(data: ImportedData) {
+    const { botId, messages: newMessages } = data
+    importedMessages.value[botId] = newMessages
+    messages.value = messages.value
+      .filter(m => m.botId !== botId)
+      .concat(newMessages)
+    storageHelper.saveMessages(botId, newMessages)
+  }
+
+  watch(selectedBotId, (newId) => {
+    if (typeof newId === 'string') {
+      const restored = storageHelper.loadMessages(newId)
+      if (restored && Array.isArray(restored)) {
+        const preserved = messages.value.filter(m => m.botId !== newId)
+        messages.value = preserved.concat(restored)
+      }
     }
   })
 
   return {
     selectedBotId,
     messages,
+    filteredMessages,
+    applyImportedMessages,
   }
 })

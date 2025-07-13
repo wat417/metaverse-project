@@ -1,25 +1,38 @@
-export const saveToLocalStorage = (key: string, data: object): void => {
+function saveMessages(botId: string, messages: any[]) {
   try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (e) {
-    console.error(`[Storage] 保存失敗: ${e}`);
+    const key = `botHistory_${botId}`
+    const serialized = JSON.stringify(messages)
+    localStorage.setItem(key, serialized)
+  } catch (error) {
+    console.error(`[保存失敗:${botId}]`, error)
   }
-};
+}
 
-export const loadFromLocalStorage = (key: string): object | null => {
+function loadMessages(botId: string): any[] {
   try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch (e) {
-    console.error(`[Storage] 読込失敗: ${e}`);
-    return null;
+    const key = `botHistory_${botId}`
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : []
+  } catch (error) {
+    console.error(`[読込失敗:${botId}]`, error)
+    return []
   }
-};
+}
 
-export const clearLocalStorageKey = (key: string): void => {
+function hasSavedMessages(botId: string): boolean {
   try {
-    localStorage.removeItem(key);
-  } catch (e) {
-    console.error(`[Storage] 削除失敗: ${e}`);
+    const key = `botHistory_${botId}`
+    const raw = localStorage.getItem(key)
+    return !!raw && raw.length > 0
+  } catch {
+    return false
   }
-};
+}
+
+const storageHelper = {
+  saveMessages,
+  loadMessages,
+  hasSavedMessages,
+}
+
+export default storageHelper
