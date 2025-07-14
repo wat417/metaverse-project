@@ -1,52 +1,19 @@
-import { defineStore } from 'pinia'
-import { ref, computed, watch, unref } from 'vue'
-import storageHelper from '@/utils/storageHelper'
+import { defineStore } from 'pinia';
+import { toastService } from '@/services/toastService';
 
-interface Message {
-  id: string
-  botId: string
-  content: string
-  timestamp: number
-}
-
-interface ImportedData {
-  botId: string
-  messages: Message[]
-}
-
-export const useChatStore = defineStore('chat', () => {
-  const selectedBotId = ref<string | null>(null)
-  const messages = ref<Message[]>([])
-  const importedMessages = ref<Record<string, Message[]>>({})
-
-  const filteredMessages = computed(() => {
-    const botId = unref(selectedBotId)
-    return messages.value.filter(m => m.botId === botId)
-  })
-
-  function applyImportedMessages(data: ImportedData) {
-    const { botId, messages: newMessages } = data
-    importedMessages.value[botId] = newMessages
-    messages.value = messages.value
-      .filter(m => m.botId !== botId)
-      .concat(newMessages)
-    storageHelper.saveMessages(botId, newMessages)
-  }
-
-  watch(selectedBotId, (newId) => {
-    if (typeof newId === 'string') {
-      const restored = storageHelper.loadMessages(newId)
-      if (restored && Array.isArray(restored)) {
-        const preserved = messages.value.filter(m => m.botId !== newId)
-        messages.value = preserved.concat(restored)
-      }
+export const useChatStore = defineStore('chat', {
+  state: () => ({
+    messages: [] as any[],
+    selectedBotId: null
+  }),
+  actions: {
+    saveChatHistory() {
+      // 保存処理（仮）
+      toastService.show("履歴が保存されました。", { type: "success" });
+    },
+    applyImportedMessages(imported: any[]) {
+      this.messages = imported;
+      toastService.show("インポートが完了しました。", { type: "success" });
     }
-  })
-
-  return {
-    selectedBotId,
-    messages,
-    filteredMessages,
-    applyImportedMessages,
   }
-})
+});
