@@ -1,0 +1,10 @@
+{
+  "ja": {
+    "save_success": "保存が完了しました。",
+    "import_success": "インポートが完了しました。"
+  },
+  "en": {
+    "save_success": "Saved successfully.",
+    "import_success": "Import completed."
+  }
+}

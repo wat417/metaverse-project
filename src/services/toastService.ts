@@ -1,42 +1,14 @@
-import { createApp } from 'vue';
-import ToastUI from '../components/ui/toastUI.vue';
+import { i18n } from '@/i18n';
 
-let currentToast: { app: any, container: HTMLElement } | null = null;
-
-interface ToastOptions {
-  type?: string;
-  duration?: number;
-  position?: string;
-}
+export type ToastOptions = {
+  messageType: keyof typeof i18n.global.messages.value['ja'];
+};
 
 export const toastService = {
-  show(message: string, options: ToastOptions = {}) {
-    // 既存トーストを解除
-    if (currentToast) {
-      currentToast.app.unmount();
-      document.body.removeChild(currentToast.container);
-      currentToast = null;
-    }
-
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-
-    const app = createApp(ToastUI, {
-      message,
-      type: options.type || 'info',
-      duration: options.duration || 3000,
-      position: options.position || 'bottom-right'
-    });
-
-    app.mount(container);
-
-    currentToast = { app, container };
-
-    // duration後に自動解除
-    setTimeout(() => {
-      app.unmount();
-      document.body.removeChild(container);
-      currentToast = null;
-    }, options.duration || 3000);
-  }
+  show(options: ToastOptions) {
+    const lang = i18n.global.locale.value;
+    const messages = i18n.global.messages.value[lang];
+    const message = messages?.[options.messageType] ?? messages?.['default'];
+    console.log('TOAST:', message);
+  },
 };
