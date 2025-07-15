@@ -1,10 +1,65 @@
 {
   "ja": {
-    "save_success": "保存が完了しました。",
-    "import_success": "インポートが完了しました。"
+    "error": {
+      "invalidToken": "トークンが無効です",
+      "tokenExpired": "トークンの有効期限が切れました",
+      "unauthorizedAccess": "アクセス権限がありません"
+    },
+    "connection": {
+      "disconnected": "接続が切断されました",
+      "reconnected": "再接続しました",
+      "serverTimeout": "サーバー応答がありません"
+    },
+    "status": {
+      "userJoined": "ユーザーが参加しました",
+      "userLeft": "ユーザーが退出しました",
+      "roomCreated": "新しいルームが作成されました"
+    },
+    "chat": {
+      "messageSent": "メッセージを送信しました",
+      "messageReceived": "新しいメッセージがあります"
+    }
   },
   "en": {
-    "save_success": "Saved successfully.",
-    "import_success": "Import completed."
+    "error": {
+      "invalidToken": "Token is invalid",
+      "tokenExpired": "Token has expired",
+      "unauthorizedAccess": "Unauthorized access"
+    },
+    "connection": {
+      "disconnected": "Disconnected",
+      "reconnected": "Reconnected",
+      "serverTimeout": "No response from server"
+    },
+    "status": {
+      "userJoined": "User joined",
+      "userLeft": "User left",
+      "roomCreated": "New room created"
+    },
+    "chat": {
+      "messageSent": "Message sent",
+      "messageReceived": "New message received"
+    }
+  },
+  "zh": {
+    "error": {
+      "invalidToken": "令牌无效",
+      "tokenExpired": "令牌已过期",
+      "unauthorizedAccess": "无权限访问"
+    },
+    "connection": {
+      "disconnected": "连接已断开",
+      "reconnected": "重新连接",
+      "serverTimeout": "服务器无响应"
+    },
+    "status": {
+      "userJoined": "用户已加入",
+      "userLeft": "用户已离开",
+      "roomCreated": "已创建新房间"
+    },
+    "chat": {
+      "messageSent": "消息已发送",
+      "messageReceived": "收到新消息"
+    }
   }
 }

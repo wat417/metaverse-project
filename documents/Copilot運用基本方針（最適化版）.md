@@ -58,6 +58,7 @@
 
 ## 5. 🧱 構造理解
 - Git Repository（`https://github.com/wat417/metaverse-project`）の構成／ブランチを参照し、実際の構成と作業指示が乖離しない様常に確認を行う事
+- Repositoryの確認を求められた場合、キャッシュされた情報ではなく指示を受けたタイミングで確認すること
 
 ---
 
