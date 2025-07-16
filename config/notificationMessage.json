@@ -1,0 +1,14 @@
+{
+  "ja": {
+    "filterNotice": "一部の語句が非表示処理されました。"
+  },
+  "en": {
+    "filterNotice": "Some words were masked from the message."
+  },
+  "zh": {
+    "filterNotice": "部分内容已被屏蔽。"
+  },
+  "ko": {
+    "filterNotice": "일부 문장이 마스킹되었습니다."
+  }
+}
