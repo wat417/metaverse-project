@@ -1,0 +1,23 @@
+{
+  "rules": [
+    {
+      "id": "R001",
+      "type": "侮辱",
+      "enabled": true,
+      "terms": ["侮辱語A", "侮辱語B"]
+    },
+    {
+      "id": "R002",
+      "type": "差別",
+      "enabled": true,
+      "terms": ["差別表現X", "差別表現Y"]
+    },
+    {
+      "id": "R003",
+      "type": "暴力",
+      "enabled": false,
+      "terms": ["暴力語1", "暴力語2"]
+    }
+  ],
+  "mask": "※※※"
+}
