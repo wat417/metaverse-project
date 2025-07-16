@@ -1,14 +1,21 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import rulesConfig from './config/filterRules.json';
 
-const rulesPath = path.join(__dirname, './config/filterRules.json');
-const rules = JSON.parse(fs.readFileSync(rulesPath, 'utf8'));
+interface Rule {
+  id: string;
+  type: string;
+  terms: string[];
+  enabled: boolean;
+}
 
 export const filterText = (text: string): string => {
-  let result = text;
-  for (const word of rules.ngWords) {
-    const regex = new RegExp(word, 'gi');
-    result = result.replace(regex, rules.mask);
-  }
-  return result;
+  const activeRules: Rule[] = Array.isArray(rulesConfig.rules)
+    ? rulesConfig.rules.filter((rule) => rule.enabled)
+    : [];
+
+  return activeRules.reduce((maskedText, rule) => {
+    return rule.terms.reduce((currentText, term) => {
+      const regex = new RegExp(term, 'gi');
+      return currentText.replace(regex, rulesConfig.mask ?? '***');
+    }, maskedText);
+  }, text);
 };

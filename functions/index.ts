@@ -1,8 +1,30 @@
 import * as functions from 'firebase-functions';
-import { filterText } from './filterRules';
+import rulesConfig from './config/filterRules.json';
 
-export const chatFilter = functions.https.onCall((data: any, context) => {
-  const inputText = data?.text || '';
-  const filtered = filterText(inputText);
-  return { result: filtered };
-});
+interface Rule {
+  id: string;
+  type: string;
+  terms: string[];
+  enabled: boolean;
+}
+
+export const chatFilter = functions.https.onCall(
+  (data: any, context): { result: string } => {
+    const inputText: string = typeof data?.text === 'string' ? data.text : '';
+    const result = applyFilter(inputText);
+    return { result };
+  }
+);
+
+function applyFilter(text: string): string {
+  const activeRules: Rule[] = Array.isArray(rulesConfig.rules)
+    ? rulesConfig.rules.filter((rule: Rule) => rule.enabled)
+    : [];
+
+  return activeRules.reduce((maskedText, rule) => {
+    return rule.terms.reduce((currentText, term) => {
+      const regex = new RegExp(term, 'gi');
+      return currentText.replace(regex, rulesConfig.mask ?? '***');
+    }, maskedText);
+  }, text);
+}
