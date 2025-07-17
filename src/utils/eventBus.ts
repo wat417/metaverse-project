@@ -1,13 +1,15 @@
-import { logEvent } from "../log/eventLogger"
+import mitt from "mitt";
 
-export function emitOperation(eventType: string, payload: Record<string, any>, userId: string) {
-  const timestamp = Date.now()
-  const event = {
-    eventId: `${eventType}_${timestamp}`,
-    userId,
-    type: eventType,
-    payload,
-    timestamp
-  }
-  logEvent(event)
-}
+type Events = {
+  "show-toast": string;
+};
+
+const emitter = mitt<Events>();
+
+export const emitToast = (message: string): void => {
+  emitter.emit("show-toast", message);
+};
+
+export const onToast = (callback: (message: string) => void): void => {
+  emitter.on("show-toast", callback);
+};

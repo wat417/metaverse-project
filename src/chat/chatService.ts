@@ -1,41 +1,18 @@
-import { httpsCallable, getFunctions } from 'firebase/functions';
-import { app } from '@/config/firebase';
-import messages from '@/config/notificationMessage.json';
+import { filterText } from "../../functions/filterText";
+import notificationMessage from "../../config/notificationMessage.json";
+import { displayNotice } from "@/services/toastService";
 
-const functions = getFunctions(app);
+type LocaleKeys = keyof typeof notificationMessage;
 
-export async function applyChatFilter(text: string, lang: string = 'ja'): Promise<string> {
-  try {
-    const chatFilter = httpsCallable(functions, 'chatFilter');
-    const response = await chatFilter({ text });
+export async function processChat(text: string, locale: LocaleKeys): Promise<{ result: string }> {
+  const filteredText = await filterText(text);
+  const notice = filteredText !== text
+    ? notificationMessage[locale]?.notice ?? null
+    : null;
 
-    if (
-      typeof response?.data === 'object' &&
-      response.data !== null &&
-      'result' in response.data &&
-      typeof response.data.result === 'string'
-    ) {
-      const result = response.data.result;
+  displayNotice(notice);
 
-      if (text !== result) {
-        const message =
-          messages[lang]?.filterNotice ?? messages['ja']?.filterNotice ?? '';
-        if (message) displayChatNotice(message);
-      }
-
-      return result;
-    }
-
-    return text;
-  } catch (error) {
-    console.error('Filter error:', error);
-    return text;
-  }
-}
-
-function displayChatNotice(message: string): void {
-  const noticeElement = document.createElement('div');
-  noticeElement.textContent = message;
-  noticeElement.className = 'chat-notice';
-  document.body.appendChild(noticeElement);
+  return {
+    result: filteredText
+  };
 }
