@@ -1,16 +1,20 @@
+// src/chat/chatService.ts
+
 import { filterText } from "../../functions/filterText";
-import notificationMessage from "../../config/notificationMessage.json";
-import { displayNotice } from "@/services/toastService";
+import notificationMessageRaw from "../assets/i18n/notificationMessage.json";
+import { showToast } from "../services/toastService";
 
-type LocaleKeys = keyof typeof notificationMessage;
+const notificationMessage = notificationMessageRaw as Record<string, any>;
 
-export async function processChat(text: string, locale: LocaleKeys): Promise<{ result: string }> {
+export async function processChat(text: string, locale: string): Promise<{ result: string }> {
   const filteredText = await filterText(text);
   const notice = filteredText !== text
-    ? notificationMessage[locale]?.notice ?? null
+    ? notificationMessage?.[locale]?.status?.userLeft ?? null
     : null;
 
-  displayNotice(notice);
+  if (notice) {
+    showToast(notice);
+  }
 
   return {
     result: filteredText

@@ -12,3 +12,12 @@ export function hasStatusChanged(uid: string, newStatus: string): boolean {
   }
   return false;
 }
+
+// 状態分類ラベル定義
+export const statusLabels: Record<string, string> = {
+  active: "アクティブ",
+  idle: "アイドル",
+  disconnected: "切断",
+  exited: "退出",
+  reconnect: "再接続"
+};
