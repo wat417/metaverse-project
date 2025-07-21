@@ -1,26 +1,29 @@
-// src/services/toastService.ts
-
 import { onToast } from "../utils/eventBus";
-import messages from "../assets/i18n/notificationMessage.json";
+import { getNotificationText } from "../utils/getNotificationText";
+import { MessageType } from "../types/message";
 
-type MessageMap = {
-  [lang: string]: {
-    [category: string]: {
-      [key: string]: string;
-    };
-  };
+const isValidMessageType = (key: string): key is MessageType => {
+  return [
+    "error.invalidToken",
+    "error.tokenExpired",
+    "error.unauthorizedAccess",
+    "connection.disconnected",
+    "connection.reconnected",
+    "connection.serverTimeout",
+    "status.userJoined",
+    "status.userLeft",
+    "status.roomCreated",
+    "chat.messageSent",
+    "chat.messageReceived"
+  ].includes(key);
 };
 
-const typedMessages: MessageMap = messages as MessageMap;
+onToast(({ messageKey }) => {
+  const message = isValidMessageType(messageKey)
+    ? getNotificationText(messageKey)
+    : "未定義メッセージ";
 
-onToast(({ messageKey, lang }) => {
-  const [category, key] = messageKey.split(".");
-  const localizedMessage =
-    typedMessages[lang]?.[category]?.[key] ||
-    typedMessages["ja"]?.[category]?.[key] ||
-    "メッセージ未定義";
-
-  showToast(localizedMessage);
+  showToast(message);
 });
 
 export const showToast = (message: string) => {

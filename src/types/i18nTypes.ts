@@ -1,6 +1,9 @@
-export interface MessageSchema {
-  save_success: string;
-  import_success: string;
-  error_generic?: string;
-  default?: string;
+export interface NotificationMessageCategory {
+  [key: string]: string;
+}
+
+export interface NotificationMessages {
+  [lang: string]: {
+    [category: string]: NotificationMessageCategory;
+  };
 }

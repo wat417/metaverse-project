@@ -1,12 +1,12 @@
-// src/types/message.ts
-
-export type ReplyState = 'pending' | 'done';
-
-export interface Message {
-  id: string;
-  text: string;
-  sender: string;
-  botId?: string;
-  timestamp: number;
-  replyState?: ReplyState;
-}
+export type MessageType =
+  | "error.invalidToken"
+  | "error.tokenExpired"
+  | "error.unauthorizedAccess"
+  | "connection.disconnected"
+  | "connection.reconnected"
+  | "connection.serverTimeout"
+  | "status.userJoined"
+  | "status.userLeft"
+  | "status.roomCreated"
+  | "chat.messageSent"
+  | "chat.messageReceived";
