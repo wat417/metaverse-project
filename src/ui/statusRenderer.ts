@@ -1,6 +1,7 @@
 // src/ui/statusRenderer.ts
-import { getRemoteAvatars } from '@/services/peerAvatarSync'
-import { statusLabels } from '@/utils/statusMap'
+
+import { getRemoteAvatars } from '@/services/peerAvatarSync';
+import { statusLabels } from '@/utils/statusMap';
 
 export function renderRemoteAvatars(ctx: CanvasRenderingContext2D) {
   const avatars = getRemoteAvatars();
@@ -36,4 +37,9 @@ function getStatusIcon(status: string): HTMLImageElement {
 
 export function renderStatusText(status: string): string {
   return statusLabels[status] || `状態: ${status}`;
+}
+
+export function renderStatusLabel(label: string): void {
+  const el = document.getElementById('status-label');
+  if (el) el.innerText = label;
 }

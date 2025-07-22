@@ -1,3 +1,5 @@
+// src/types/i18nTypes.ts
+
 export interface NotificationMessageCategory {
   [key: string]: string;
 }

@@ -21,3 +21,6 @@ export const statusLabels: Record<string, string> = {
   exited: "退出",
   reconnect: "再接続"
 };
+
+// UI連携用ラベル一覧（statusDisplay.ts用）
+export const STATUS_LABELS: string[] = Object.keys(statusLabels);

@@ -1,5 +1,6 @@
-// statusDisplay.ts
-import { STATUS_LABELS } from '../config/config';
+// src/ui/statusDisplay.ts
+
+import { STATUS_LABELS } from '../utils/statusMap';
 import { renderStatusLabel } from './statusRenderer';
 
 export function updateStatusDisplay(currentStatus: string): void {

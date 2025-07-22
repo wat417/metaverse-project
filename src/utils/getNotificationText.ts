@@ -1,11 +1,30 @@
-import { i18n } from "@/i18n";
-import { MessageType } from "@/types/message";
+// src/utils/getNotificationText.ts
 
-export const getNotificationText = (key: MessageType): string => {
-  const message = i18n.global.t(key);
-  if (message === key) {
-    console.warn(`[通知未定義] key="${key}"`);
-    return "未定義メッセージ";
+import notificationMessages from "@/assets/i18n/notificationMessage.json";
+import { NotificationMessages } from "@/types/i18nTypes";
+
+/**
+ * カテゴリ別メッセージ構成に対応した取得関数
+ * @param messageKey メッセージキー（例: "error.invalidToken"）
+ * @param lang 言語コード（例: "ja", "en", "zh"）
+ * @returns 該当メッセージまたは undefined
+ */
+export function getNotificationText(
+  messageKey: string,
+  lang: keyof NotificationMessages
+): string | undefined {
+  const messages = notificationMessages as NotificationMessages;
+  const [category, key] = messageKey.split(".");
+
+  if (
+    category &&
+    key &&
+    messages[lang] &&
+    messages[lang][category] &&
+    messages[lang][category][key]
+  ) {
+    return messages[lang][category][key];
   }
-  return message;
-};
+
+  return undefined;
+}

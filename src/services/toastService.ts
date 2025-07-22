@@ -1,31 +1,17 @@
-import { onToast } from "../utils/eventBus";
-import { getNotificationText } from "../utils/getNotificationText";
-import { MessageType } from "../types/message";
+// src/services/toastService.ts
 
-const isValidMessageType = (key: string): key is MessageType => {
-  return [
-    "error.invalidToken",
-    "error.tokenExpired",
-    "error.unauthorizedAccess",
-    "connection.disconnected",
-    "connection.reconnected",
-    "connection.serverTimeout",
-    "status.userJoined",
-    "status.userLeft",
-    "status.roomCreated",
-    "chat.messageSent",
-    "chat.messageReceived"
-  ].includes(key);
-};
+import { onToast } from "@/utils/eventBus";
+import { getNotificationText } from "@/utils/getNotificationText";
+import { NotificationMessages } from "@/types/i18nTypes";
+
+const DEFAULT_LANGUAGE: keyof NotificationMessages = "ja";
 
 onToast(({ messageKey }) => {
-  const message = isValidMessageType(messageKey)
-    ? getNotificationText(messageKey)
-    : "未定義メッセージ";
-
+  const message =
+    getNotificationText(messageKey, DEFAULT_LANGUAGE) ?? "通知内容未定義";
   showToast(message);
 });
 
-export const showToast = (message: string) => {
+export const showToast = (message: string): void => {
   console.log("[Toast]", message);
 };
