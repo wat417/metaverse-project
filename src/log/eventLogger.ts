@@ -14,28 +14,17 @@ export function logEvent(event: OperationEvent): void {
   writeLog(path, event);
 }
 
-export function stepCompleted(stepNo: number): void {
+export function logChatFilterViolation(userId: string, text: string, matchedTerms: string[]): void {
   const timestamp = Date.now();
-  const dateStr = new Date(timestamp).toISOString().slice(0, 10).replace(/-/g, "");
-  const path = `/logs/${dateStr}/system/stepCompleted/Step${stepNo}`;
   const event: OperationEvent = {
-    eventId: `Step${stepNo}`,
-    userId: "system",
-    type: "stepCompleted",
-    payload: { status: "completed" },
+    eventId: `chatFilterViolation`,
+    userId,
+    type: "chatFilterViolation",
+    payload: {
+      originalText: text,
+      matchedTerms
+    },
     timestamp
   };
-  writeLog(path, event);
-}
-
-export function logDisconnectEvent(userId: string, eventId: string): void {
-  logEvent({ eventId, userId, type: "disconnect", payload: {}, timestamp: Date.now() });
-}
-
-export function logExitEvent(userId: string, eventId: string): void {
-  logEvent({ eventId, userId, type: "exit", payload: {}, timestamp: Date.now() });
-}
-
-export function logReconnectEvent(userId: string, eventId: string): void {
-  logEvent({ eventId, userId, type: "reconnect", payload: {}, timestamp: Date.now() });
+  logEvent(event);
 }

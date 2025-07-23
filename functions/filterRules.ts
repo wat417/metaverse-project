@@ -7,15 +7,12 @@ interface Rule {
   enabled: boolean;
 }
 
-export const filterText = (text: string): string => {
-  const activeRules: Rule[] = Array.isArray(rulesConfig.rules)
+export function getFilterRules(): Rule[] {
+  return Array.isArray(rulesConfig.rules)
     ? rulesConfig.rules.filter((rule) => rule.enabled)
     : [];
+}
 
-  return activeRules.reduce((maskedText, rule) => {
-    return rule.terms.reduce((currentText, term) => {
-      const regex = new RegExp(term, 'gi');
-      return currentText.replace(regex, rulesConfig.mask ?? '***');
-    }, maskedText);
-  }, text);
-};
+export function getMaskString(): string {
+  return rulesConfig.mask ?? '***';
+}
