@@ -5,6 +5,7 @@ interface Rule {
   type: string;
   terms: string[];
   enabled: boolean;
+  anonymousOnly?: boolean;
 }
 
 export function getFilterRules(): Rule[] {
