@@ -1,4 +1,5 @@
 import { writeLog } from "./rtdbAdapter";
+import { applyFilteredText } from "../chat/filterContext";
 
 export interface OperationEvent {
   eventId: string;
@@ -14,7 +15,7 @@ export function logEvent(event: OperationEvent): void {
   writeLog(path, event);
 }
 
-export function logChatFilterViolation(userId: string, text: string, matchedTerms: string[]): void {
+export function logChatFilterViolation(userId: string, text: string, matchedTerms: string[], isAnonymous: boolean): void {
   const timestamp = Date.now();
   const event: OperationEvent = {
     eventId: `chatFilterViolation`,
@@ -22,7 +23,9 @@ export function logChatFilterViolation(userId: string, text: string, matchedTerm
     type: "chatFilterViolation",
     payload: {
       originalText: text,
-      matchedTerms
+      matchedTerms,
+      anonymousOnly: isAnonymous,
+      filteredResult: applyFilteredText(text, isAnonymous).masked
     },
     timestamp
   };
