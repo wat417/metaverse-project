@@ -27,3 +27,7 @@ export function applyFilteredText(inputText: string, isAnonymous: boolean): {
 
   return { flagged, masked, matchedTerms };
 }
+
+export function isNonViolationEvent(termList: string[]): boolean {
+  return termList.length === 0;
+}
