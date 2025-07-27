@@ -1,3 +1,4 @@
+// message.ts
 export type MessageType =
   | "error.invalidToken"
   | "error.tokenExpired"
@@ -10,3 +11,10 @@ export type MessageType =
   | "status.roomCreated"
   | "chat.messageSent"
   | "chat.messageReceived";
+
+export interface ChatEvent {
+  timestamp: string
+  text: string
+  type: MessageType
+  system?: boolean
+}
