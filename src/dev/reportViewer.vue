@@ -2,38 +2,50 @@
 <template>
   <div>
     <h2>レポートビューア</h2>
-    <label>表示形式：</label>
     <select v-model="format">
       <option value="markdown">Markdown</option>
       <option value="json">JSON</option>
+      <option value="statistics">統計</option>
+      <option value="history">履歴</option>
     </select>
 
-    <label>フィルター対象：</label>
-    <input v-model="filterText" placeholder="カンマ区切りで入力（例：chat.messageSent,status.userJoined）" />
+    <input v-model="filterText" placeholder="フィルター対象（カンマ区切り）" />
+    <button @click="loadReport">再生成</button>
 
-    <pre>{{ report }}</pre>
+    <div v-if="format === 'statistics'">
+      <stats-chart :stats="stats" />
+    </div>
+    <pre v-else>{{ report }}</pre>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { generateReport } from '../chat/reportBuilder'
+import StatsChart from './statsChart.vue'
 import type { ChatEvent, MessageType } from '../types/message'
 
-const format = ref<'markdown' | 'json'>('markdown')
+const format = ref<'markdown' | 'json' | 'statistics' | 'history'>('markdown')
 const filterText = ref('')
+const report = ref('生成待ち…')
+const stats = ref<Record<string, number>>({})
 
 const mockEvents: ChatEvent[] = [
-  { timestamp: '2025-07-26T10:00:00', text: 'ユーザーがログインしました', type: 'status.userJoined' },
-  { timestamp: '2025-07-26T10:01:00', text: 'メッセージ送信', type: 'chat.messageSent' },
-  { timestamp: '2025-07-26T10:02:00', text: '[system] 接続確認', type: 'connection.reconnected', system: true }
+  { timestamp: '2025-07-28T08:30:00', text: 'ログイン成功', type: 'status.userJoined' },
+  { timestamp: '2025-07-28T08:31:10', text: 'チャット送信', type: 'chat.messageSent' },
+  { timestamp: '2025-07-28T08:32:15', text: '接続復旧', type: 'connection.reconnected', system: true }
 ]
 
-const report = computed(() => {
-  const types = filterText.value
-    .split(',')
-    .map(t => t.trim())
-    .filter(t => !!t) as MessageType[]
-  return generateReport(mockEvents, format.value, types)
-})
+async function loadReport() {
+  const types = filterText.value.split(',').map(t => t.trim()) as MessageType[]
+  const result = await generateReport(mockEvents, format.value, types)
+  if (format.value === 'statistics') {
+    stats.value = JSON.parse(result)
+    report.value = '統計チャート表示中…'
+  } else {
+    report.value = result
+  }
+}
+
+loadReport()
 </script>
