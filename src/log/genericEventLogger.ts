@@ -1,5 +1,8 @@
-import { writeLog } from "./rtdbAdapter";
+export function writeLog(path: string, event: unknown): void {
+  console.log(`[${path}]`, event)
+}
 
+// 以下は既存コードと変更なし
 export interface GenericEvent {
   eventId: string;
   userId: string;
@@ -9,8 +12,8 @@ export interface GenericEvent {
 }
 
 export function logEvent(event: GenericEvent): void {
-  const dateStr = new Date(event.timestamp).toISOString().slice(0, 10).replace(/-/g, "");  
-  const path = `/logs/${dateStr}/${event.userId}/${event.eventId}`;  
+  const dateStr = new Date(event.timestamp).toISOString().slice(0, 10).replace(/-/g, "");
+  const path = `/logs/${dateStr}/${event.userId}/${event.eventId}`;
   writeLog(path, event);
 }
 

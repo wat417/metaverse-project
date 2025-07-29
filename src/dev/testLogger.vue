@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { applyFilteredText } from "../chat/filterContext";
-import { logChatFilterViolation } from "../log/eventLogger";
+import { logChatFilterViolation } from "../log/genericEventLogger";
 import { ref } from "vue";
 
 const inputText = ref("");

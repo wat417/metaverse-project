@@ -2,7 +2,7 @@
 
 import { emitToast } from "@/utils/eventBus";
 import rawNotificationMessage from "@/assets/i18n/notificationMessage.json";
-import { logEvent } from "@/log/eventLogger";
+import { logEvent } from "@/log/genericEventLogger";
 
 const notificationMessage = rawNotificationMessage as Record<string, any>;
 

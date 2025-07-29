@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts" setup>
-import { logGenericUserAction } from "@/log/eventLogger";
+import { logGenericUserAction } from "@/log/genericEventLogger";
 
 function sendUserActionLog() {
   logGenericUserAction("user_test_001", "openModal", "logTester", { value: true });

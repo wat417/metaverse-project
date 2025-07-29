@@ -1,4 +1,3 @@
-// eventClassifier.ts
 import type { ChatEvent } from '../types/message'
 
 export type EventType = 'INFO' | 'ACTION' | 'SYSTEM'
