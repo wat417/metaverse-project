@@ -1,6 +1,8 @@
+// chatService.ts
 import { applyFilteredText } from "./filterContext";
 import notificationMessageRaw from "../assets/i18n/notificationMessage.json";
 import { showToast } from "../services/toastService";
+// UI制御ロジックは ChartDisplay に移管済
 
 const notificationMessage = notificationMessageRaw as Record<string, any>;
 

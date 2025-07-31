@@ -6,7 +6,7 @@
     "outDir": "dist",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "types": ["node"],
+    "types": ["node", "react", "react-dom"],
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -19,7 +19,8 @@
     "typeRoots": [
       "./node_modules/@types",
       "./src/types"
-    ]
+    ],
+    "jsx": "react-jsx"
   },
   "include": [
     "src/**/*",
