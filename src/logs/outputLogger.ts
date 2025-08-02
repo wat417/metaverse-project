@@ -1,7 +1,15 @@
-import { publishSettings } from "../config/publishConfig";
+import { publishSettings } from '../config/publishConfig';
 
-export function logOutput(message: string) {
-  if (publishSettings.enableLogging) {
-    console.log(`[OutputLog]: ${message}`);
-  }
-}
+const buildLogLabel = (type: string, deploy: boolean): string => {
+  const base = `[${type.toUpperCase()}`;
+  const suffix = deploy ? '+SELECTOR' : '';
+  return `${base}${suffix} LOG]`;
+};
+
+export const logOutput = (message: string) => {
+  if (!publishSettings.enableLogs) return;
+  const type = publishSettings.chartType || 'default';
+  const deploy = publishSettings.deploySelectorGroup;
+  const label = buildLogLabel(type, deploy);
+  console.log(`${label} ${message}`);
+};
