@@ -13,12 +13,7 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    sourcemap: false,
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-        chartTestPage: path.resolve(__dirname, "chartTestPage.html")
-      }
-    }
+    sourcemap: false
+    // ✅ rollupOptions.input を削除 → SPAモードへ切り替え
   }
 });
