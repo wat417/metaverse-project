@@ -1,4 +1,4 @@
-// src/routere.ts
+// src/router.ts
 
 import { createRouter, createWebHistory } from "vue-router";
 import TestNotification from "@/dev/testNotification.vue";
