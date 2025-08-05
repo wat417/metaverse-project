@@ -14,6 +14,5 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: false
-    // ✅ rollupOptions.input を削除 → SPAモードへ切り替え
   }
 });

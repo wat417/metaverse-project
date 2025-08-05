@@ -3,9 +3,6 @@
   "cleanUrls": true,
   "framework": "vite",
   "rewrites": [
-    { "source": "/dev/chartTestPage", "destination": "/index.html" },
-    { "source": "/dev/testNotification", "destination": "/index.html" },
-    { "source": "/dev/chartSwitcher", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/" }
   ]
 }

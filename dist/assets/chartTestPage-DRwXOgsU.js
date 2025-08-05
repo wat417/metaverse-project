@@ -1,1 +1,0 @@
-import{d as t,l as s,y as n,m as a,_ as o,K as r}from"./_plugin-vue_export-helper-BgbuhTzQ.js";const p=t({__name:"chartTestPage",setup(_){return(l,e)=>(n(),s("div",null,e[0]||(e[0]=[a("h1",null,"Chart Test Page",-1),a("p",null,"ここにチャートを表示します。",-1)])))}}),c=o(p,[["__scopeId","data-v-7667d6ac"]]);r(c).mount("#app");
