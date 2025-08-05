@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 
 export default defineConfig({
-  base: "/", // Vercelではルートパスが基本
+  base: "/",
   plugins: [vue()],
   resolve: {
     alias: {
@@ -11,11 +11,14 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: "dist", // Vercelが公開するフォルダ
-    emptyOutDir: true, // ビルド前に dist をクリア
-    sourcemap: false, // 本番環境では不要
+    outDir: "dist",
+    emptyOutDir: true,
+    sourcemap: false,
     rollupOptions: {
-      input: path.resolve(__dirname, "index.html") // エントリーポイント
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        chartTestPage: path.resolve(__dirname, "chartTestPage.html")
+      }
     }
   }
 });
