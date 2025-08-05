@@ -1,6 +1,7 @@
 {
+  "outputDirectory": "dist",
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/metaverse-project/:path*", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
