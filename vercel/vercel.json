@@ -2,6 +2,7 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/chartTestPage", "destination": "/chartTestPage.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
