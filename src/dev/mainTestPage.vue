@@ -1,7 +1,7 @@
 <!-- src/dev/mainTestPage.vue -->
 
 <template>
-  <div id="main-ui-container" style="width:100%; height:100vh;" />
+  <div id="main-ui-container" style="width:100%; height:100vh;"></div>
   <ChatUI />
 </template>
 
