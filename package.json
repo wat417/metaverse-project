@@ -7,16 +7,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "phaser": "^3.60.0",
     "firebase": "^9.23.0",
+    "phaser": "^3.60.0",
     "vue": "^3.4.0",
+    "vue-i18n": "^11.1.11",
     "vue-router": "^4.2.5"
   },
   "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-vue": "^4.4.0",
     "typescript": "^5.3.3",
-    "vite": "^4.4.9",
-    "@types/react": "^18.2.15",
-    "@types/react-dom": "^18.2.7"
+    "vite": "^4.4.9"
   }
 }
