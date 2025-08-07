@@ -1,18 +1,16 @@
-// /vite.config.ts
-
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import path from "path";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
-  base: "/", // ← 必須
+  base: '/',
   plugins: [vue()],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src")
-    }
-  },
   build: {
-    outDir: "dist"
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: 'index.html'
+      }
+    }
   }
-});
+})
