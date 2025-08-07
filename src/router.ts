@@ -1,25 +1,38 @@
 // src/router.ts
 
 import { createRouter, createWebHistory } from "vue-router";
-import TestNotification from "@/dev/testNotification.vue";
-import ChartSwitcher from "@/dev/chartSwitcher.vue";
-import ChartTestPage from "@/dev/chartTestPage.vue";
+
+import TestNotification from "./dev/testNotification.vue";
+import ChartSwitcher from "./dev/chartSwitcher.vue";
+import ChartTestPage from "./dev/chartTestPage.vue";
+import MainTestPage from "./dev/mainTestPage.vue";
+import ChatUI from "./ui/chat/chatUI.vue";
 
 const routes = [
   {
-    path: "/dev/testNotification",
+    path: "/testNotification",
     name: "TestNotification",
     component: TestNotification
   },
   {
-    path: "/dev/chartSwitcher",
+    path: "/chartSwitcher",
     name: "ChartSwitcher",
     component: ChartSwitcher
   },
   {
-    path: "/dev/chartTestPage",
+    path: "/chartTestPage",
     name: "ChartTestPage",
     component: ChartTestPage
+  },
+  {
+    path: "/mainTestPage",
+    name: "MainTestPage",
+    component: MainTestPage
+  },
+  {
+    path: "/chat",
+    name: "ChatUI",
+    component: ChatUI
   }
 ];
 

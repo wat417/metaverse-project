@@ -1,11 +1,13 @@
+// src/scenes/MainScene.ts
+
 import Phaser from 'phaser';
 import { syncPlayerPosition } from '../firebase/sync';
 import { PlayerData } from '../types/player';
 import { listenToPlayerRemovals } from '../firebase/remove';
 import { onChildAdded, ref, getDatabase } from 'firebase/database';
 import { PlayerVisualSet } from '../utils/playerMap';
-import { createTeamSelector } from "../ui/teamSelector";
-import  { createGroupControl } from "../ui/groupControl";
+import { selectTeam } from "../ui/teamSelector";
+import { createGroupControl } from "../ui/groupControl";
 import { saveSession, loadSession } from "../state/sessionStore";
 
 const LABEL_STYLE = {
@@ -37,18 +39,15 @@ export default class MainScene extends Phaser.Scene {
     this.avatar = this.add.image(400, 300, 'avatar').setScale(0.5);
     this.uid = (window as any).userId;
 
-    // ✅ 状態ラベル生成処理は statusDisplay.ts 側に完全移譲済
-    // ※ DOM追加や createStatusLabel() 呼び出しは不要
-
     // Firebase上の他プレイヤー参加監視
     const playersRef = ref(getDatabase(), 'players');
     onChildAdded(playersRef, (snapshot) => this.handleNewPlayer(snapshot));
 
-    // ✅ チーム選択 UI の生成
-    createTeamSelector(["Alpha", "Bravo", "Charlie"]);
+    // ✅ チーム選択（暫定：初期選択のみ）
+    selectTeam("Alpha");
 
-    // ✅ グループ操作UIの生成
-    createGroupControl();
+    // ✅ グループ操作UIの生成（暫定オプション付き）
+    createGroupControl({ mode: "default" });
 
     // 他プレイヤー退出監視
     listenToPlayerRemovals((uid) => {
@@ -68,7 +67,6 @@ export default class MainScene extends Phaser.Scene {
     const { x, y } = this.avatar;
     syncPlayerPosition(this.uid, x, y);
 
-    // ❌ 表示更新はイベント駆動に移行済 → ラベル手動位置更新を除外可能
     this.playerVisuals.forEach((v) => v.updatePosition(v.sprite.x, v.sprite.y));
   }
 
@@ -83,10 +81,6 @@ export default class MainScene extends Phaser.Scene {
     const sprite = this.add.sprite(x, y, 'avatar').setScale(0.5);
     this.otherPlayers.set(uid, sprite);
 
-    // ✅ 表示ラベルは statusDisplay.ts による動的DOM反映へ移行
-    //  ここでは生成・更新不要（責務分離済）
-
-    // VisualSet作成・登録
     const dummyLabel = this.add.text(x, y - 24, '', LABEL_STYLE).setOrigin(0.5);
     const visuals = new PlayerVisualSet(uid, sprite, dummyLabel);
     this.playerVisuals.set(uid, visuals);
