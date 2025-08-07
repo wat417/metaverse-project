@@ -1,11 +1,5 @@
 {
-  "outputDirectory": "dist",
-  "cleanUrls": true,
-  "framework": "vite",
   "rewrites": [
-    { "source": "/:path*", "destination": "/" }
-  ],
-  "routes": [
-    { "src": "/mainTestPage", "dest": "/index.html" }
+    { "source": "/mainTestPage", "destination": "/" }
   ]
 }
