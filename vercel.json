@@ -4,5 +4,8 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/:path*", "destination": "/" }
+  ],
+  "routes": [
+    { "src": "/mainTestPage", "dest": "/index.html" }
   ]
 }
