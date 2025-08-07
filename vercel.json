@@ -1,5 +1,8 @@
 {
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "framework": "vite"
+  "framework": "vite",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
