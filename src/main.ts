@@ -1,19 +1,7 @@
-import Phaser from 'phaser'
-import MainScene from './scenes/MainScene'
-import { initAuth } from './auth'
+// src/main.ts
 
-const launchGame = (userId: string) => {
-  (window as any).userId = userId
+import { createApp } from 'vue'
+import App from './App.vue'
+import { router } from './router'
 
-  const config: Phaser.Types.Core.GameConfig = {
-    type: Phaser.AUTO,
-    width: 800,
-    height: 600,
-    backgroundColor: '#202020',
-    scene: [MainScene]
-  }
-
-  new Phaser.Game(config)
-}
-
-initAuth(launchGame)
+createApp(App).use(router).mount('#app')
