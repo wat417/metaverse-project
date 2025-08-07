@@ -10,6 +10,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src')
     }
   },
+  optimizeDeps: {
+    include: ['vue-i18n']
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -20,7 +23,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html'
-      }
+      },
+      external: ['vue-i18n']
     }
   }
 })
