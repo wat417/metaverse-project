@@ -1,10 +1,9 @@
-// src/scenes/MainScene.ts
-
 import Phaser from 'phaser';
 import { syncPlayerPosition } from '../firebase/sync';
 import { PlayerData } from '../types/player';
 import { listenToPlayerRemovals } from '../firebase/remove';
-import { onChildAdded, ref, getDatabase } from 'firebase/database';
+import { getDatabase, ref, onChildAdded } from '@firebase/database';
+import { initializeApp } from '@firebase/app';
 import { PlayerVisualSet } from '../utils/playerMap';
 import { selectTeam } from "../ui/teamSelector";
 import { createGroupControl } from "../ui/groupControl";
@@ -15,6 +14,19 @@ const LABEL_STYLE = {
   color: '#ffffff',
   backgroundColor: '#000000'
 };
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 export default class MainScene extends Phaser.Scene {
   private avatar!: Phaser.GameObjects.Image;
@@ -35,38 +47,28 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
-    // 自プレイヤー描画
     this.avatar = this.add.image(400, 300, 'avatar').setScale(0.5);
     this.uid = (window as any).userId;
 
-    // Firebase上の他プレイヤー参加監視
-    const playersRef = ref(getDatabase(), 'players');
+    const playersRef = ref(database, 'players');
     onChildAdded(playersRef, (snapshot) => this.handleNewPlayer(snapshot));
 
-    // ✅ チーム選択（暫定：初期選択のみ）
     selectTeam("Alpha");
-
-    // ✅ グループ操作UIの生成（暫定オプション付き）
     createGroupControl({ mode: "default" });
 
-    // 他プレイヤー退出監視
     listenToPlayerRemovals((uid) => {
       this.otherPlayers.get(uid)?.destroy();
       this.otherPlayers.delete(uid);
-
       this.playerLabels.get(uid)?.destroy();
       this.playerLabels.delete(uid);
-
       this.playerVisuals.get(uid)?.destroy();
       this.playerVisuals.delete(uid);
     });
   }
 
   update() {
-    // 自プレイヤーの位置を同期
     const { x, y } = this.avatar;
     syncPlayerPosition(this.uid, x, y);
-
     this.playerVisuals.forEach((v) => v.updatePosition(v.sprite.x, v.sprite.y));
   }
 
@@ -76,11 +78,8 @@ export default class MainScene extends Phaser.Scene {
     if (uid === this.uid || this.otherPlayers.has(uid)) return;
 
     const { x, y, name, emoji } = playerData;
-
-    // Sprite描画
     const sprite = this.add.sprite(x, y, 'avatar').setScale(0.5);
     this.otherPlayers.set(uid, sprite);
-
     const dummyLabel = this.add.text(x, y - 24, '', LABEL_STYLE).setOrigin(0.5);
     const visuals = new PlayerVisualSet(uid, sprite, dummyLabel);
     this.playerVisuals.set(uid, visuals);

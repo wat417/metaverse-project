@@ -13,14 +13,14 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    },
     rollupOptions: {
       input: {
         main: 'index.html'
-      },
-      external: ['firebase/database']
-    },
-    commonjsOptions: {
-      include: [/node_modules/]
+      }
     }
   }
 })
