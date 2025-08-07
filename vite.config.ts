@@ -1,13 +1,13 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import path from 'path' // ✅ これが未定義だと alias が壊れる
+import path from 'path'
 
 export default defineConfig({
   base: '/',
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src') // ✅ これが機能するには path が必要
+      '@': path.resolve(__dirname, 'src')
     }
   },
   build: {
@@ -16,7 +16,11 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'index.html'
-      }
+      },
+      external: ['firebase/database']
+    },
+    commonjsOptions: {
+      include: [/node_modules/]
     }
   }
 })
