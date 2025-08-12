@@ -1,11 +1,13 @@
+// src/utils/eventBus.ts
+
 import { i18n } from "../i18n";
 
 type ToastPayload = {
   messageKey: string;
-  lang: string;
+  lang?: string;
 };
 
-export const emitToast = (messageKey: string, lang?: string) => {
+export function emitToast(messageKey: string, lang?: string): void {
   const resolvedLang =
     typeof i18n.global.locale === "string"
       ? i18n.global.locale
@@ -17,16 +19,28 @@ export const emitToast = (messageKey: string, lang?: string) => {
   };
 
   window.dispatchEvent(new CustomEvent("toast", { detail: payload }));
-};
+}
 
-export const onToast = (handler: (payload: ToastPayload) => void) => {
+export function emitOperation(
+  event: string,
+  payload: any,
+  sender?: string
+): void {
+  const detail = { payload, sender };
+  window.dispatchEvent(new CustomEvent(event, { detail }));
+}
+
+export function emit(event: string, payload?: any): void {
+  window.dispatchEvent(new CustomEvent(event, { detail: payload }));
+}
+
+export function onToast(handler: (payload: ToastPayload) => void): void {
   window.addEventListener("toast", (event: Event) => {
     const toastEvent = event as CustomEvent;
     handler(toastEvent.detail);
   });
-};
+}
 
-export const removeToastListener = () => {
-  // 既存リスナーを外す際に使用（ハンドラ指定は実装者判断）
+export function removeToastListener(): void {
   window.removeEventListener("toast", () => {});
-};
+}

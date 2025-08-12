@@ -1,19 +1,32 @@
-import type { Message } from '@/types/message'
+// src/utils/importHelper.ts
 
-export async function parseImportFile(file: File): Promise<{ botId: string, messages: Message[] }> {
+// 型定義に依存せずに動作させるため、Message 型の外部参照は行いません。
+// 型安全化が必要な場合は、別途 src/types/message.ts を定義し、再度参照してください。
+
+export async function parseImportFile(
+  file: File
+): Promise<{ botId: string; messages: any[] }> {
   const content = await file.text()
-  const data = JSON.parse(content)
 
-  if (typeof data.botId !== 'string') {
+  let data: unknown
+  try {
+    data = JSON.parse(content)
+  } catch {
+    throw new Error('インポートファイルがJSONとして不正です')
+  }
+
+  const obj = data as { botId?: unknown; messages?: unknown }
+
+  if (typeof obj.botId !== 'string') {
     throw new Error('botIdが不正です')
   }
 
-  if (!Array.isArray(data.messages)) {
+  if (!Array.isArray(obj.messages)) {
     throw new Error('messagesが配列形式ではありません')
   }
 
   return {
-    botId: data.botId,
-    messages: data.messages as Message[]
+    botId: obj.botId,
+    messages: obj.messages as any[]
   }
 }
